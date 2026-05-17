@@ -101,6 +101,13 @@ export default function Dashboard() {
         Reports Upload
       </button>
 
+      <button
+        className="btn btn-primary mt-3 w-100"
+        onClick={() => navigate("/medicine")}
+      >
+        Medicine Tracker
+      </button>
+
       <button className="btn btn-dark mt-3 w-100" onClick={logout}>
         Logout
       </button>

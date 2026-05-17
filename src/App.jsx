@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Symptoms from "./pages/Symptoms";
 import Appointments from "./pages/Appointments";
 import Reports from "./pages/Reports";
+import Medicine from "./pages/Medicine";
 
 export default function App() {
   return (
@@ -61,6 +62,15 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Reports />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/medicine"
+          element={
+            <ProtectedRoute>
+              <Medicine />
             </ProtectedRoute>
           }
         />
