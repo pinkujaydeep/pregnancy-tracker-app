@@ -1,0 +1,1 @@
+export const APP_VERSION = "build-2026-05-17-02";
