@@ -108,6 +108,20 @@ export default function Dashboard() {
         Medicine Tracker
       </button>
 
+      <button
+        className="btn btn-info mt-3 w-100"
+        onClick={() => navigate("/water")}
+      >
+        Water Tracker 💧
+      </button>
+
+      <button
+  className="btn btn-secondary mt-3 w-100"
+  onClick={() => navigate("/weight")}
+>
+  Weight Tracker ⚖️
+</button>
+
       <button className="btn btn-dark mt-3 w-100" onClick={logout}>
         Logout
       </button>

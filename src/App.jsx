@@ -8,6 +8,8 @@ import Symptoms from "./pages/Symptoms";
 import Appointments from "./pages/Appointments";
 import Reports from "./pages/Reports";
 import Medicine from "./pages/Medicine";
+import Water from "./pages/Water";
+import Weight from "./pages/Weight";
 
 export default function App() {
   return (
@@ -74,6 +76,24 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/water"
+          element={
+            <ProtectedRoute>
+              <Water />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+  path="/weight"
+  element={
+    <ProtectedRoute>
+      <Weight />
+    </ProtectedRoute>
+  }
+/>
       </Routes>
     </BrowserRouter>
   );
