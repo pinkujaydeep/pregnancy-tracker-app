@@ -26,6 +26,11 @@
   --shadow-soft: 0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
+:root[data-theme="dark"] .card,
+:root[data-theme="dark"] .gradient-card {
+  color: var(--text-main);
+}
+
 * {
   box-sizing: border-box;
 }

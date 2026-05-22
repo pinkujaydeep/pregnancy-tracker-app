@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
-import { doc, getDoc, collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, query, orderBy, limit, getDocs, where, getCountFromServer } from "firebase/firestore";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { calculatePregnancyProgress } from "../utils/pregnancy";
@@ -32,21 +32,29 @@ export default function Dashboard() {
       }
 
       try {
-        // Profile
+        // Fetch profile first, then load all dashboard pieces in parallel
         const userRef = doc(db, "users", user.uid);
-        const snap = await getDoc(userRef);
+        const profileSnap = await getDoc(userRef);
 
-        if (!snap.exists()) {
+        if (!profileSnap.exists()) {
           navigate("/setup");
           return;
         }
 
-        const profileData = snap.data();
+        const profileData = profileSnap.data();
         setProfile(profileData);
 
-        // Checklist
         const checklistRef = doc(db, "users", user.uid, "dailyChecklist", today);
-        const checklistSnap = await getDoc(checklistRef);
+        const waterRef = doc(db, "users", user.uid, "water", today);
+        const apptRef = collection(db, "users", user.uid, "appointments");
+        const medRef = collection(db, "users", user.uid, "medicines");
+
+        const [checklistSnap, waterSnap, apptSnap, medCountSnap] = await Promise.all([
+          getDoc(checklistRef),
+          getDoc(waterRef),
+          getDocs(query(apptRef, orderBy("dateTime", "asc"), limit(50))),
+          getCountFromServer(query(medRef, where("active", "==", true))),
+        ]);
 
         if (checklistSnap.exists()) {
           const checklist = checklistSnap.data().checklist;
@@ -55,10 +63,6 @@ export default function Dashboard() {
           setChecklistPercent(Math.round((completed / total) * 100));
         }
 
-        // Water
-        const waterRef = doc(db, "users", user.uid, "water", today);
-        const waterSnap = await getDoc(waterRef);
-
         if (waterSnap.exists()) {
           setWaterInfo({
             count: waterSnap.data().count || 0,
@@ -66,47 +70,26 @@ export default function Dashboard() {
           });
         }
 
-        // Next Appointment
-        const apptRef = collection(db, "users", user.uid, "appointments");
-        const apptQuery = query(apptRef, orderBy("dateTime", "asc"), limit(50));
-        const apptSnap = await getDocs(apptQuery);
+        const upcoming = apptSnap.docs
+          .map((d) => d.data())
+          .find((appt) => new Date(appt.dateTime).getTime() >= Date.now());
 
-        if (!apptSnap.empty) {
-          const upcoming = apptSnap.docs
-            .map((d) => d.data())
-            .find((appt) => new Date(appt.dateTime).getTime() >= Date.now());
+        if (upcoming) {
+          setNextAppointment(upcoming);
+          const apptTime = new Date(upcoming.dateTime).getTime();
+          const diffHours = (apptTime - Date.now()) / (1000 * 60 * 60);
 
-          if (!upcoming) {
-            setNextAppointment(null);
-            setAppointmentAlert(null);
+          if (diffHours > 0 && diffHours <= 24) {
+            setAppointmentAlert(`⚠️ Appointment in ${Math.round(diffHours)} hours: ${upcoming.title}`);
           } else {
-            const apptData = upcoming;
-            setNextAppointment(apptData);
-
-            const apptTime = new Date(apptData.dateTime).getTime();
-            const nowTime = Date.now();
-
-            const diffHours = (apptTime - nowTime) / (1000 * 60 * 60);
-
-            if (diffHours > 0 && diffHours <= 24) {
-              setAppointmentAlert(
-                `⚠️ Appointment in ${Math.round(diffHours)} hours: ${apptData.title}`
-              );
-            } else {
-              setAppointmentAlert(null);
-            }
+            setAppointmentAlert(null);
           }
         } else {
           setNextAppointment(null);
           setAppointmentAlert(null);
         }
 
-        // Active Medicines count
-        const medRef = collection(db, "users", user.uid, "medicines");
-        const medSnap = await getDocs(medRef);
-        const activeCount = medSnap.docs.filter((d) => d.data().active === true).length;
-        setActiveMedicines(activeCount);
-
+        setActiveMedicines(medCountSnap.data().count || 0);
       } catch (err) {
         alert(err.message);
       } finally {
@@ -184,7 +167,7 @@ export default function Dashboard() {
 
       {/* Tiles Grid */}
       <div className="row g-2 mb-3">
-        <div className="col-6">
+        <div className="col-12 col-sm-6">
           <TileCard
             title="Checklist ✅"
             subtitle={`${checklistPercent}% completed`}
@@ -193,7 +176,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-6">
+        <div className="col-12 col-sm-6">
           <TileCard
             title="Water 💧"
             subtitle={`${waterInfo.count}/${waterInfo.goal} (${waterPercent}%)`}
@@ -202,7 +185,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-6">
+        <div className="col-12 col-sm-6">
           <TileCard
             title="Medicines 💊"
             subtitle={`${activeMedicines} active`}
@@ -211,7 +194,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-6">
+        <div className="col-12 col-sm-6">
           <TileCard
             title="Symptoms 🤒"
             subtitle="Track daily symptoms"
@@ -220,7 +203,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-6">
+        <div className="col-12 col-sm-6">
           <TileCard
             title="Weekly Guide 📘"
             subtitle={`Current week: ${progress.week}`}
@@ -229,7 +212,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-6">
+        <div className="col-12 col-sm-6">
           <TileCard
             title="Weight ⚖️"
             subtitle="Track weight logs"
@@ -238,7 +221,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-6">
+        <div className="col-12 col-sm-6">
           <TileCard
             title="Kick Counter 👶"
             subtitle="Save kick sessions"
@@ -247,7 +230,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-6">
+        <div className="col-12 col-sm-6">
           <TileCard
             title="Contractions ⏱️"
             subtitle="Timer for contractions"
