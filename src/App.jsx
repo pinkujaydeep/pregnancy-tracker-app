@@ -20,6 +20,10 @@ import DailyChecklist from "./pages/DailyChecklist";
 import Trackers from "./pages/Trackers";
 import Settings from "./pages/Settings";
 import Reminders from "./pages/Reminders";
+import Emergency from "./pages/Emergency";
+import Insights from "./pages/Insights";
+import Journal from "./pages/Journal";
+import BirthPlan from "./pages/BirthPlan";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import BottomNav from "./components/BottomNav";
@@ -38,7 +42,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div style={{ paddingBottom: "80px" }}>
+      <div className="app-shell">
         <Routes>
           <Route path="/" element={<Login />} />
 
@@ -170,6 +174,42 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Reminders />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/emergency"
+            element={
+              <ProtectedRoute>
+                <Emergency />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/insights"
+            element={
+              <ProtectedRoute>
+                <Insights />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/journal"
+            element={
+              <ProtectedRoute>
+                <Journal />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/birth-plan"
+            element={
+              <ProtectedRoute>
+                <BirthPlan />
               </ProtectedRoute>
             }
           />

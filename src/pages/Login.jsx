@@ -80,25 +80,21 @@ export default function Login() {
 
   return (
     <div
-      className="d-flex justify-content-center align-items-center vh-100"
-      style={{
-        background: "linear-gradient(135deg, #f8f9ff, #e8f6ff)",
-        padding: "20px",
-      }}
+      className="d-flex justify-content-center align-items-center min-vh-100"
+      style={{ padding: "20px" }}
     >
       <div
-        className="card shadow-lg border-0 p-4"
+        className="card shadow-lg border-0 p-4 login-card"
         style={{
           width: "100%",
           maxWidth: "420px",
-          borderRadius: "18px",
         }}
       >
         <div className="text-center mb-4">
           <div style={{ fontSize: "55px" }}>🤰</div>
           <h3 className="fw-bold mt-2 mb-1">Pregnancy Tracker</h3>
           <p className="text-muted mb-0">
-            Track weekly growth, medicines, symptoms & reminders.
+            Your personal pregnancy care and wellness journal.
           </p>
         </div>
 
@@ -106,7 +102,7 @@ export default function Login() {
           <label className="form-label fw-bold">Email</label>
           <input
             className="form-control"
-            style={{ borderRadius: "12px", padding: "12px" }}
+            style={{ padding: "12px" }}
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -117,7 +113,7 @@ export default function Login() {
           <label className="form-label fw-bold">Password</label>
           <input
             className="form-control"
-            style={{ borderRadius: "12px", padding: "12px" }}
+            style={{ padding: "12px" }}
             type="password"
             placeholder="Enter your password"
             value={password}
@@ -138,7 +134,6 @@ export default function Login() {
 
         <button
           className="btn btn-primary w-100 py-2 fw-bold"
-          style={{ borderRadius: "14px" }}
           onClick={login}
           disabled={loading}
         >
@@ -147,7 +142,6 @@ export default function Login() {
 
         <button
           className="btn btn-success w-100 py-2 fw-bold mt-2"
-          style={{ borderRadius: "14px" }}
           onClick={signup}
           disabled={loading}
         >
@@ -158,7 +152,6 @@ export default function Login() {
 
         <button
           className="btn btn-outline-dark w-100 py-2 fw-bold"
-          style={{ borderRadius: "14px" }}
           onClick={googleLogin}
           disabled={loading}
         >

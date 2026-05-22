@@ -10,6 +10,9 @@ export default function ProfileSetup() {
   const [name, setName] = useState("");
   const [lmpDate, setLmpDate] = useState("");
   const [cycleLength, setCycleLength] = useState(28);
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [doctorName, setDoctorName] = useState("");
+  const [hospitalName, setHospitalName] = useState("");
 
   const saveProfile = async () => {
     if (!name || !lmpDate) {
@@ -26,6 +29,9 @@ export default function ProfileSetup() {
         name,
         lmpDate,
         cycleLength: Number(cycleLength),
+        bloodGroup,
+        doctorName,
+        hospitalName,
         dueDate: dueDate.toISOString(),
         createdAt: new Date().toISOString(),
       });
@@ -37,8 +43,9 @@ export default function ProfileSetup() {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container page-wrap" style={{ maxWidth: "560px" }}>
       <h3>Setup Your Pregnancy Profile</h3>
+      <p className="text-muted">Add your baseline details for personalized tracking.</p>
 
       <div className="card p-4 mt-3">
         <label className="form-label">Name</label>
@@ -63,6 +70,30 @@ export default function ProfileSetup() {
           className="form-control mb-3"
           value={cycleLength}
           onChange={(e) => setCycleLength(e.target.value)}
+        />
+
+        <label className="form-label">Blood Group (Optional)</label>
+        <input
+          className="form-control mb-3"
+          value={bloodGroup}
+          onChange={(e) => setBloodGroup(e.target.value)}
+          placeholder="A+, O-, etc"
+        />
+
+        <label className="form-label">Doctor Name (Optional)</label>
+        <input
+          className="form-control mb-3"
+          value={doctorName}
+          onChange={(e) => setDoctorName(e.target.value)}
+          placeholder="Primary OB/GYN"
+        />
+
+        <label className="form-label">Hospital Name (Optional)</label>
+        <input
+          className="form-control mb-3"
+          value={hospitalName}
+          onChange={(e) => setHospitalName(e.target.value)}
+          placeholder="Preferred hospital"
         />
 
         <button className="btn btn-primary w-100" onClick={saveProfile}>

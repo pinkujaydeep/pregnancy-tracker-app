@@ -113,7 +113,7 @@ export default function Medicine() {
   };
 
   return (
-    <div className="container mt-4" style={{ maxWidth: "520px" }}>
+    <div className="container page-wrap" style={{ maxWidth: "520px" }}>
       <h4>Medicine Tracker</h4>
 
       <button

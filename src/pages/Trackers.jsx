@@ -1,27 +1,17 @@
 import { useNavigate } from "react-router-dom";
+import TileCard from "../components/TileCard";
 
 export default function Trackers() {
   const navigate = useNavigate();
 
-  const Tile = ({ title, subtitle, onClick }) => (
-    <div
-      className="card p-3 shadow-sm"
-      style={{ cursor: "pointer" }}
-      onClick={onClick}
-    >
-      <div className="fw-bold">{title}</div>
-      <div className="text-muted small">{subtitle}</div>
-    </div>
-  );
-
   return (
-    <div className="container mt-3" style={{ maxWidth: "520px" }}>
+    <div className="container page-wrap" style={{ maxWidth: "560px" }}>
       <h4>Trackers</h4>
       <p className="text-muted">All pregnancy tracking modules</p>
 
       <div className="row g-2">
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Checklist ✅"
             subtitle="Daily routine"
             onClick={() => navigate("/checklist")}
@@ -29,7 +19,7 @@ export default function Trackers() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Water 💧"
             subtitle="Daily water intake"
             onClick={() => navigate("/water")}
@@ -37,7 +27,7 @@ export default function Trackers() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Medicines 💊"
             subtitle="Supplements schedule"
             onClick={() => navigate("/medicine")}
@@ -45,7 +35,7 @@ export default function Trackers() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Symptoms 🤒"
             subtitle="Track symptoms"
             onClick={() => navigate("/symptoms")}
@@ -53,7 +43,7 @@ export default function Trackers() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Weight ⚖️"
             subtitle="Weekly weight"
             onClick={() => navigate("/weight")}
@@ -61,7 +51,7 @@ export default function Trackers() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Kick Counter 👶"
             subtitle="Kick sessions"
             onClick={() => navigate("/kicks")}
@@ -69,7 +59,7 @@ export default function Trackers() {
         </div>
 
         <div className="col-12">
-          <Tile
+          <TileCard
             title="Contractions ⏱️"
             subtitle="Timer + history"
             onClick={() => navigate("/contractions")}
@@ -77,10 +67,42 @@ export default function Trackers() {
         </div>
 
         <div className="col-12">
-          <Tile
+          <TileCard
             title="Appointments 📅"
-            subtitle="Doctor visits"
+            subtitle="Your checkup schedule"
             onClick={() => navigate("/appointments")}
+          />
+        </div>
+
+        <div className="col-12">
+          <TileCard
+            title="Insights 📈"
+            subtitle="Charts and personal PDF summary"
+            onClick={() => navigate("/insights")}
+          />
+        </div>
+
+        <div className="col-12">
+          <TileCard
+            title="My Journal 📝"
+            subtitle="Mood and day notes"
+            onClick={() => navigate("/journal")}
+          />
+        </div>
+
+        <div className="col-12">
+          <TileCard
+            title="Birth Plan 🎒"
+            subtitle="Personal readiness checklist"
+            onClick={() => navigate("/birth-plan")}
+          />
+        </div>
+
+        <div className="col-12">
+          <TileCard
+            title="Emergency 🚨"
+            subtitle="Danger signs and quick contacts"
+            onClick={() => navigate("/emergency")}
           />
         </div>
       </div>

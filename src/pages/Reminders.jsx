@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { auth, db } from "../firebase";
+import { app, auth, db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { requestNotificationPermission } from "../utils/notifications";
+import { enableFreePush } from "../utils/pushNotifications";
 
 export default function Reminders() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
+  const [pushEnabled, setPushEnabled] = useState(false);
 
   const [settings, setSettings] = useState({
     medicineReminder: true,
@@ -30,9 +32,14 @@ export default function Reminders() {
       try {
         const refDoc = doc(db, "users", auth.currentUser.uid, "settings", "reminders");
         const snap = await getDoc(refDoc);
+        const pushSnap = await getDoc(doc(db, "users", auth.currentUser.uid, "settings", "push"));
 
         if (snap.exists()) {
           setSettings(snap.data());
+        }
+
+        if (pushSnap.exists()) {
+          setPushEnabled(Boolean(pushSnap.data().enabled));
         }
       } catch (err) {
         alert(err.message);
@@ -60,6 +67,22 @@ export default function Reminders() {
     if (ok) alert("Notifications enabled!");
   };
 
+  const enableBackgroundPush = async () => {
+    try {
+      const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
+      await enableFreePush({
+        app,
+        db,
+        uid: auth.currentUser?.uid,
+        vapidKey,
+      });
+      setPushEnabled(true);
+      alert("Free push is enabled. You can send test pushes from Firebase Console.");
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   if (loading) {
     return (
       <div className="container mt-5 text-center">
@@ -69,7 +92,7 @@ export default function Reminders() {
   }
 
   return (
-    <div className="container mt-3" style={{ maxWidth: "520px" }}>
+    <div className="container page-wrap" style={{ maxWidth: "520px" }}>
       <h4>Reminders 🔔</h4>
 
       <button
@@ -81,6 +104,10 @@ export default function Reminders() {
 
       <button className="btn btn-primary w-100 mb-3" onClick={enableNotifications}>
         Enable Browser Notifications
+      </button>
+
+      <button className="btn btn-outline-primary w-100 mb-3" onClick={enableBackgroundPush}>
+        {pushEnabled ? "Background Push Enabled" : "Enable Free Background Push (FCM)"}
       </button>
 
       <div className="card p-3 shadow-sm mb-3">
@@ -160,6 +187,10 @@ export default function Reminders() {
 
       <div className="alert alert-warning">
         ⚠️ These reminders will work only when app is open in browser.
+      </div>
+
+      <div className="alert alert-info">
+        Free push note: background push requires VAPID key in environment and Firebase Cloud Messaging setup.
       </div>
     </div>
   );

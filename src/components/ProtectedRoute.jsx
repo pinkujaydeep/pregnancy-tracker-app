@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute({ children }) {
   const [loading, setLoading] = useState(true);
@@ -24,8 +25,7 @@ export default function ProtectedRoute({ children }) {
   }
 
   if (!user) {
-    window.location.href = "/";
-    return null;
+    return <Navigate to="/" replace />;
   }
 
   return children;

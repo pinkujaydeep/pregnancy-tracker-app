@@ -2,16 +2,16 @@ import { NavLink } from "react-router-dom";
 
 export default function BottomNav() {
   const linkStyle = ({ isActive }) =>
-    `nav-link text-center ${isActive ? "text-primary fw-bold" : "text-muted"}`;
+    `nav-link nav-item-lite text-center ${isActive ? "active" : ""}`;
 
   return (
     <nav
-      className="navbar fixed-bottom bg-white border-top"
+      className="navbar fixed-bottom nav-surface"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="container d-flex justify-content-around">
+      <div className="container d-flex justify-content-around align-items-center">
         <NavLink to="/dashboard" className={linkStyle}>
-          🏠 <br />
+          <span>🏠</span> <br />
           <small>Home</small>
         </NavLink>
 
@@ -21,12 +21,17 @@ export default function BottomNav() {
         </NavLink>
 
         <NavLink to="/reports" className={linkStyle}>
-          📂 <br />
+          <span>📂</span> <br />
           <small>Reports</small>
         </NavLink>
 
+        <NavLink to="/emergency" className={linkStyle}>
+          <span>🚨</span> <br />
+          <small>Emergency</small>
+        </NavLink>
+
         <NavLink to="/settings" className={linkStyle}>
-          ⚙️ <br />
+          <span>⚙️</span> <br />
           <small>Settings</small>
         </NavLink>
       </div>

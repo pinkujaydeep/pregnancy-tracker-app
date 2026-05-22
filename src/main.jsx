@@ -2,7 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./i18n";
+import "./index.css";
 import App from "./App";
+import { ThemeProvider } from "./components/ThemeProvider";
 import { registerSW } from "virtual:pwa-register";
 import { APP_VERSION } from "./version";
 
@@ -24,6 +26,8 @@ registerSW({ immediate: true });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );

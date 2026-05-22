@@ -119,7 +119,7 @@ export default function Reports() {
   };
 
   return (
-    <div className="container mt-4" style={{ maxWidth: "520px" }}>
+    <div className="container page-wrap" style={{ maxWidth: "520px" }}>
       <h4>Reports Upload</h4>
 
       <button

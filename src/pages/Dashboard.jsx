@@ -4,6 +4,7 @@ import { doc, getDoc, collection, query, orderBy, limit, getDocs } from "firebas
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { calculatePregnancyProgress } from "../utils/pregnancy";
+import TileCard from "../components/TileCard";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -67,24 +68,33 @@ export default function Dashboard() {
 
         // Next Appointment
         const apptRef = collection(db, "users", user.uid, "appointments");
-        const apptQuery = query(apptRef, orderBy("dateTime", "asc"), limit(1));
+        const apptQuery = query(apptRef, orderBy("dateTime", "asc"), limit(50));
         const apptSnap = await getDocs(apptQuery);
 
         if (!apptSnap.empty) {
-          const apptData = apptSnap.docs[0].data();
-          setNextAppointment(apptData);
+          const upcoming = apptSnap.docs
+            .map((d) => d.data())
+            .find((appt) => new Date(appt.dateTime).getTime() >= Date.now());
 
-          const apptTime = new Date(apptData.dateTime).getTime();
-          const nowTime = Date.now();
-
-          const diffHours = (apptTime - nowTime) / (1000 * 60 * 60);
-
-          if (diffHours > 0 && diffHours <= 24) {
-            setAppointmentAlert(
-              `⚠️ Appointment in ${Math.round(diffHours)} hours: ${apptData.title}`
-            );
-          } else {
+          if (!upcoming) {
+            setNextAppointment(null);
             setAppointmentAlert(null);
+          } else {
+            const apptData = upcoming;
+            setNextAppointment(apptData);
+
+            const apptTime = new Date(apptData.dateTime).getTime();
+            const nowTime = Date.now();
+
+            const diffHours = (apptTime - nowTime) / (1000 * 60 * 60);
+
+            if (diffHours > 0 && diffHours <= 24) {
+              setAppointmentAlert(
+                `⚠️ Appointment in ${Math.round(diffHours)} hours: ${apptData.title}`
+              );
+            } else {
+              setAppointmentAlert(null);
+            }
           }
         } else {
           setNextAppointment(null);
@@ -120,24 +130,13 @@ export default function Dashboard() {
   const progress = calculatePregnancyProgress(profile.lmpDate);
   const waterPercent = Math.min(Math.round((waterInfo.count / waterInfo.goal) * 100), 100);
 
-  const Tile = ({ title, subtitle, color, onClick }) => (
-    <div
-      className={`card p-3 shadow-sm ${color}`}
-      style={{ cursor: "pointer", minHeight: "110px" }}
-      onClick={onClick}
-    >
-      <div className="fw-bold">{title}</div>
-      <div className="small mt-2">{subtitle}</div>
-    </div>
-  );
-
   return (
-    <div className="container mt-3" style={{ maxWidth: "520px" }}>
+    <div className="container page-wrap" style={{ maxWidth: "560px" }}>
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-2">
+      <div className="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <h5 className="mb-0">Hi {profile.name} 👋</h5>
-          <small className="text-muted">{today}</small>
+          <h4 className="mb-0">Hi {profile.name} 👋</h4>
+          <small className="text-muted">{new Date(today).toLocaleDateString("en-IN")}</small>
         </div>
 
         <button className="btn btn-sm btn-outline-danger" onClick={logout}>
@@ -146,7 +145,7 @@ export default function Dashboard() {
       </div>
 
       {/* Pregnancy Summary Card */}
-      <div className="card p-3 shadow-sm mb-3">
+      <div className="card p-3 shadow-sm mb-3 gradient-card">
         <div className="d-flex justify-content-between">
           <div>
             <h5 className="mb-1">Week {progress.week}</h5>
@@ -164,6 +163,18 @@ export default function Dashboard() {
         </div>
       </div>
 
+      <div className="card p-3 shadow-sm mb-3">
+        <div className="d-flex justify-content-between align-items-center">
+          <div>
+            <div className="fw-semibold">Need urgent help?</div>
+            <div className="text-muted small">One tap access to emergency contacts and danger signs.</div>
+          </div>
+          <button className="btn btn-danger btn-sm" onClick={() => navigate("/emergency")}>
+            Open
+          </button>
+        </div>
+      </div>
+
       {appointmentAlert && (
         <div className="alert alert-warning shadow-sm">
           <b>Upcoming Appointment Reminder</b>
@@ -174,7 +185,7 @@ export default function Dashboard() {
       {/* Tiles Grid */}
       <div className="row g-2 mb-3">
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Checklist ✅"
             subtitle={`${checklistPercent}% completed`}
             color="border-success"
@@ -183,7 +194,7 @@ export default function Dashboard() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Water 💧"
             subtitle={`${waterInfo.count}/${waterInfo.goal} (${waterPercent}%)`}
             color="border-info"
@@ -192,7 +203,7 @@ export default function Dashboard() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Medicines 💊"
             subtitle={`${activeMedicines} active`}
             color="border-primary"
@@ -201,7 +212,7 @@ export default function Dashboard() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Symptoms 🤒"
             subtitle="Track daily symptoms"
             color="border-secondary"
@@ -210,7 +221,7 @@ export default function Dashboard() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Weekly Guide 📘"
             subtitle={`Current week: ${progress.week}`}
             color="border-dark"
@@ -219,7 +230,7 @@ export default function Dashboard() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Weight ⚖️"
             subtitle="Track weight logs"
             color="border-warning"
@@ -228,7 +239,7 @@ export default function Dashboard() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Kick Counter 👶"
             subtitle="Save kick sessions"
             color="border-primary"
@@ -237,7 +248,7 @@ export default function Dashboard() {
         </div>
 
         <div className="col-6">
-          <Tile
+          <TileCard
             title="Contractions ⏱️"
             subtitle="Timer for contractions"
             color="border-danger"
@@ -246,7 +257,7 @@ export default function Dashboard() {
         </div>
 
         <div className="col-12">
-          <Tile
+          <TileCard
             title="Appointments 📅"
             subtitle={
               nextAppointment
@@ -259,11 +270,47 @@ export default function Dashboard() {
         </div>
 
         <div className="col-12">
-          <Tile
+          <TileCard
             title="Reports 📂"
             subtitle="Upload scan / prescription"
             color="border-info"
             onClick={() => navigate("/reports")}
+          />
+        </div>
+
+        <div className="col-12">
+          <TileCard
+            title="Insights 📈"
+            subtitle="Trends and personal summary PDF"
+            color="border-success"
+            onClick={() => navigate("/insights")}
+          />
+        </div>
+
+        <div className="col-12">
+          <TileCard
+            title="My Journal 📝"
+            subtitle="Daily mood and notes"
+            color="border-primary"
+            onClick={() => navigate("/journal")}
+          />
+        </div>
+
+        <div className="col-12">
+          <TileCard
+            title="Birth Plan 🎒"
+            subtitle="Personal delivery checklist"
+            color="border-warning"
+            onClick={() => navigate("/birth-plan")}
+          />
+        </div>
+
+        <div className="col-12">
+          <TileCard
+            title="Emergency 🚨"
+            subtitle="Call-ready support details"
+            color="border-danger"
+            onClick={() => navigate("/emergency")}
           />
         </div>
       </div>

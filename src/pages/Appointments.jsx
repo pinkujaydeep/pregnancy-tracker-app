@@ -11,6 +11,8 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
+const RENDER_NOW_TS = Date.now();
+
 export default function Appointments() {
   const navigate = useNavigate();
 
@@ -19,7 +21,6 @@ export default function Appointments() {
   const [hospital, setHospital] = useState("");
   const [dateTime, setDateTime] = useState("");
   const [notes, setNotes] = useState("");
-
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
@@ -46,6 +47,10 @@ export default function Appointments() {
     if (!title || !dateTime) {
       alert("Please enter title and date/time");
       return;
+    }
+
+    if (new Date(dateTime).getTime() < Date.now()) {
+      if (!confirm("This appointment time is in the past. Save anyway?")) return;
     }
 
     try {
@@ -81,7 +86,7 @@ export default function Appointments() {
   };
 
   return (
-    <div className="container mt-4" style={{ maxWidth: "520px" }}>
+    <div className="container page-wrap" style={{ maxWidth: "560px" }}>
       <h4>Appointments</h4>
 
       <button
@@ -152,6 +157,13 @@ export default function Appointments() {
               <div className="text-muted small">
                 {new Date(a.dateTime).toLocaleString("en-IN")}
               </div>
+              <span
+                className={`badge mt-2 ${
+                  new Date(a.dateTime).getTime() > RENDER_NOW_TS ? "bg-success" : "bg-secondary"
+                }`}
+              >
+                {new Date(a.dateTime).getTime() > RENDER_NOW_TS ? "Upcoming" : "Past"}
+              </span>
             </div>
 
             <button

@@ -10,6 +10,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { evaluateSymptomRisk } from "../utils/triage";
 
 export default function Symptoms() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export default function Symptoms() {
   const [symptomType, setSymptomType] = useState("Nausea");
   const [severity, setSeverity] = useState(5);
   const [notes, setNotes] = useState("");
+  const [triageInfo, setTriageInfo] = useState(null);
 
   const [logs, setLogs] = useState([]);
 
@@ -67,8 +69,12 @@ export default function Symptoms() {
         symptomType,
         severity: Number(severity),
         notes,
+        triageLevel: evaluateSymptomRisk({ symptomType, severity, notes }).level,
         createdAt: new Date().toISOString(),
       });
+
+      const triage = evaluateSymptomRisk({ symptomType, severity, notes });
+      setTriageInfo(triage);
 
       setNotes("");
       setSeverity(5);
@@ -91,7 +97,7 @@ export default function Symptoms() {
   };
 
   return (
-    <div className="container mt-4" style={{ maxWidth: "520px" }}>
+    <div className="container page-wrap" style={{ maxWidth: "520px" }}>
       <h4>Symptoms Tracker</h4>
 
       <button
@@ -150,6 +156,26 @@ export default function Symptoms() {
         </button>
       </div>
 
+      {triageInfo && (
+        <div
+          className={`alert ${
+            triageInfo.level === "high"
+              ? "alert-danger"
+              : triageInfo.level === "moderate"
+              ? "alert-warning"
+              : "alert-success"
+          }`}
+        >
+          <div className="fw-semibold">Risk Check: {triageInfo.level.toUpperCase()}</div>
+          <div>{triageInfo.message}</div>
+          {triageInfo.level === "high" && (
+            <button className="btn btn-danger btn-sm mt-2" onClick={() => navigate("/emergency")}>
+              Open Emergency Support
+            </button>
+          )}
+        </div>
+      )}
+
       <h5>History</h5>
 
       {logs.length === 0 && (
@@ -176,6 +202,19 @@ export default function Symptoms() {
             <span className="badge bg-warning text-dark">
               Severity: {log.severity}/10
             </span>
+            {log.triageLevel && (
+              <span
+                className={`badge ms-2 ${
+                  log.triageLevel === "high"
+                    ? "bg-danger"
+                    : log.triageLevel === "moderate"
+                    ? "bg-warning text-dark"
+                    : "bg-success"
+                }`}
+              >
+                Risk: {log.triageLevel}
+              </span>
+            )}
           </div>
 
           {log.notes && <p className="mt-2 mb-0">{log.notes}</p>}

@@ -3,6 +3,17 @@ import { auth, db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
+const defaultChecklist = {
+  medicinesTaken: false,
+  drankWater: false,
+  prenatalVitamins: false,
+  exerciseDone: false,
+  fruitsEaten: false,
+  healthyMeal: false,
+  sleptWell: false,
+  moodChecked: false,
+};
+
 export default function DailyChecklist() {
   const navigate = useNavigate();
 
@@ -10,16 +21,7 @@ export default function DailyChecklist() {
 
   const [loading, setLoading] = useState(true);
 
-  const [checklist, setChecklist] = useState({
-    medicinesTaken: false,
-    drankWater: false,
-    prenatalVitamins: false,
-    exerciseDone: false,
-    fruitsEaten: false,
-    healthyMeal: false,
-    sleptWell: false,
-    moodChecked: false,
-  });
+  const [checklist, setChecklist] = useState(defaultChecklist);
 
   useEffect(() => {
     if (!auth.currentUser) {
@@ -37,7 +39,7 @@ export default function DailyChecklist() {
         } else {
           await setDoc(refDoc, {
             date: today,
-            checklist,
+            checklist: defaultChecklist,
             createdAt: new Date().toISOString(),
           });
         }
@@ -81,7 +83,7 @@ export default function DailyChecklist() {
   }
 
   return (
-    <div className="container mt-4" style={{ maxWidth: "520px" }}>
+    <div className="container page-wrap" style={{ maxWidth: "520px" }}>
       <h4>Daily Checklist ✅</h4>
 
       <button

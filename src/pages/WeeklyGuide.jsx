@@ -35,7 +35,7 @@ export default function WeeklyGuide() {
   const current = weekData.find((w) => w.week === Number(selectedWeek));
 
   return (
-    <div className="container mt-4" style={{ maxWidth: "520px" }}>
+    <div className="container page-wrap" style={{ maxWidth: "520px" }}>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h4 className="m-0">{t("weeklyGuide")}</h4>
 
