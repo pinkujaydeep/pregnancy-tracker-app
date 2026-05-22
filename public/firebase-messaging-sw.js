@@ -18,6 +18,11 @@ messaging.onBackgroundMessage((payload) => {
   const options = {
     body: payload.notification?.body || "You have a new reminder.",
     icon: "/icon.png",
+    sound: payload.notification?.sound || payload.data?.sound || "default",
+    data: {
+      ...payload.data,
+      sound: payload.notification?.sound || payload.data?.sound || "default",
+    },
   };
 
   self.registration.showNotification(title, options);

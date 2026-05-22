@@ -13,6 +13,8 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
+console.log("Firebase Config Loaded:", firebaseConfig);
+
 for (const [key, value] of Object.entries(firebaseConfig)) {
   if (!value) {
     throw new Error(`Missing Firebase env var: ${key}`);

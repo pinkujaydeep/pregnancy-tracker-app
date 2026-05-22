@@ -13,7 +13,11 @@ export default function Reminders() {
 
   const [settings, setSettings] = useState({
     medicineReminder: true,
-    medicineTime: "09:00",
+    medicineTimes: [
+      { time: "08:00", enabled: true, soundType: "bell" },
+      { time: "14:00", enabled: true, soundType: "chime" },
+      { time: "20:00", enabled: true, soundType: "alert" },
+    ],
 
     waterReminder: true,
     waterTime: "12:00",
@@ -111,9 +115,9 @@ export default function Reminders() {
       </button>
 
       <div className="card p-3 shadow-sm mb-3">
-        <h6 className="fw-bold">Medicine Reminder</h6>
+        <h6 className="fw-bold">Medicine Reminder 💊</h6>
 
-        <div className="form-check mb-2">
+        <div className="form-check mb-3">
           <input
             className="form-check-input"
             type="checkbox"
@@ -122,17 +126,64 @@ export default function Reminders() {
               saveSettings({ ...settings, medicineReminder: e.target.checked })
             }
           />
-          <label className="form-check-label">Enable Medicine Reminder</label>
+          <label className="form-check-label">Enable Medicine Reminders</label>
         </div>
 
-        <input
-          type="time"
-          className="form-control"
-          value={settings.medicineTime}
-          onChange={(e) =>
-            saveSettings({ ...settings, medicineTime: e.target.value })
-          }
-        />
+        {settings.medicineReminder && settings.medicineTimes && (
+          <div className="ms-2">
+            {settings.medicineTimes.map((med, idx) => (
+              <div key={idx} className="mb-3 p-2 border rounded bg-light">
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                  <label className="form-check-label fw-bold small">
+                    {idx === 0 ? "🌅 Morning" : idx === 1 ? "☀️ Afternoon" : "🌙 Night"}
+                  </label>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={med.enabled}
+                      onChange={(e) => {
+                        const updated = [...settings.medicineTimes];
+                        updated[idx].enabled = e.target.checked;
+                        saveSettings({ ...settings, medicineTimes: updated });
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-2">
+                  <input
+                    type="time"
+                    className="form-control form-control-sm"
+                    value={med.time}
+                    onChange={(e) => {
+                      const updated = [...settings.medicineTimes];
+                      updated[idx].time = e.target.value;
+                      saveSettings({ ...settings, medicineTimes: updated });
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label className="form-label small mb-1">Sound Type:</label>
+                  <select
+                    className="form-select form-select-sm"
+                    value={med.soundType || "bell"}
+                    onChange={(e) => {
+                      const updated = [...settings.medicineTimes];
+                      updated[idx].soundType = e.target.value;
+                      saveSettings({ ...settings, medicineTimes: updated });
+                    }}
+                  >
+                    <option value="bell">🔔 Bell</option>
+                    <option value="chime">🎶 Chime</option>
+                    <option value="alert">🚨 Alert</option>
+                  </select>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="card p-3 shadow-sm mb-3">
@@ -183,14 +234,6 @@ export default function Reminders() {
             saveSettings({ ...settings, checklistTime: e.target.value })
           }
         />
-      </div>
-
-      <div className="alert alert-warning">
-        ⚠️ These reminders will work only when app is open in browser.
-      </div>
-
-      <div className="alert alert-info">
-        Free push note: background push requires VAPID key in environment and Firebase Cloud Messaging setup.
       </div>
     </div>
   );

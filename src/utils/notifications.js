@@ -10,12 +10,26 @@ export async function requestNotificationPermission() {
   return permission === "granted";
 }
 
-export function showNotification(title, body) {
+import { playNotificationSound } from "./audio";
+
+export function showNotification(title, body, options = {}) {
   if (!("Notification" in window)) return;
   if (Notification.permission !== "granted") return;
 
-  new Notification(title, {
+  const notification = new Notification(title, {
     body,
-    icon: "/icon.png", // optional (if you have)
+    icon: "/icon.png",
+    tag: options.tag || "default",
+    requireInteraction: options.requireInteraction || false,
   });
+
+  // Play sound if enabled
+  if (options.sound !== false) {
+    playNotificationSound(options.soundType || "bell");
+  }
+
+  // Auto-close after 10 seconds if not requireInteraction
+  if (!options.requireInteraction) {
+    setTimeout(() => notification.close(), 10000);
+  }
 }

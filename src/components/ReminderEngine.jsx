@@ -26,12 +26,40 @@ export default function ReminderEngine() {
 
         const triggerKey = (name) => `${today}-${name}-${currentTime}`;
 
-        // Medicine reminder
-        if (settings.medicineReminder && settings.medicineTime === currentTime) {
-          const key = triggerKey("medicine");
-          if (!lastTriggered[key]) {
-            showNotification("Medicine Reminder 💊", "Time to take your medicine.");
-            setLastTriggered((prev) => ({ ...prev, [key]: true }));
+        // Medicine reminders - handle multiple times
+        if (settings.medicineReminder && settings.medicineTimes && Array.isArray(settings.medicineTimes)) {
+          settings.medicineTimes.forEach((med, idx) => {
+            if (med.enabled && med.time === currentTime) {
+              const key = triggerKey(`medicine-${idx}`);
+              if (!lastTriggered[key]) {
+                const timeLabel = idx === 0 ? "Morning" : idx === 1 ? "Afternoon" : "Night";
+                showNotification(
+                  `💊 Medicine Reminder - ${timeLabel}`,
+                  "Time to take your medicine.",
+                  {
+                    soundType: med.soundType || "bell",
+                    sound: true,
+                    requireInteraction: true,
+                  }
+                );
+                setLastTriggered((prev) => ({ ...prev, [key]: true }));
+              }
+            }
+          });
+        }
+
+        // Fallback for old single time format
+        if (settings.medicineReminder && settings.medicineTime && !settings.medicineTimes) {
+          if (settings.medicineTime === currentTime) {
+            const key = triggerKey("medicine");
+            if (!lastTriggered[key]) {
+              showNotification("Medicine Reminder 💊", "Time to take your medicine.", {
+                soundType: "bell",
+                sound: true,
+                requireInteraction: true,
+              });
+              setLastTriggered((prev) => ({ ...prev, [key]: true }));
+            }
           }
         }
 
@@ -39,7 +67,10 @@ export default function ReminderEngine() {
         if (settings.waterReminder && settings.waterTime === currentTime) {
           const key = triggerKey("water");
           if (!lastTriggered[key]) {
-            showNotification("Water Reminder 💧", "Drink water now.");
+            showNotification("Water Reminder 💧", "Drink water now.", {
+              soundType: "chime",
+              sound: true,
+            });
             setLastTriggered((prev) => ({ ...prev, [key]: true }));
           }
         }
@@ -48,7 +79,10 @@ export default function ReminderEngine() {
         if (settings.checklistReminder && settings.checklistTime === currentTime) {
           const key = triggerKey("checklist");
           if (!lastTriggered[key]) {
-            showNotification("Daily Checklist ✅", "Complete today’s checklist.");
+            showNotification("Daily Checklist ✅", "Complete today's checklist.", {
+              soundType: "alert",
+              sound: true,
+            });
             setLastTriggered((prev) => ({ ...prev, [key]: true }));
           }
         }
