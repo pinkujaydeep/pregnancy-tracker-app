@@ -128,10 +128,10 @@ export default function Dashboard() {
       </div>
 
       {/* Pregnancy Summary Card */}
-      <div className="card p-3 shadow-sm mb-3 gradient-card">
-        <div className="d-flex justify-content-between">
+      <div className="card p-2 shadow-sm mb-2 gradient-card">
+        <div className="d-flex justify-content-between align-items-start gap-2">
           <div>
-            <h5 className="mb-1">Week {progress.week}</h5>
+            <h5 className="mb-1 fs-6">Week {progress.week}</h5>
             <div className="text-muted small">
               Day {progress.day} • Trimester {progress.trimester}
             </div>
@@ -146,13 +146,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="card p-3 shadow-sm mb-3">
-        <div className="d-flex justify-content-between align-items-center">
+      <div className="card p-2 shadow-sm mb-3">
+        <div className="d-flex justify-content-between align-items-center gap-2">
           <div>
             <div className="fw-semibold">Need urgent help?</div>
             <div className="text-muted small">One tap access to emergency contacts and danger signs.</div>
           </div>
-          <button className="btn btn-danger btn-sm" onClick={() => navigate("/emergency")}>
+          <button className="btn btn-danger btn-sm" onClick={() => navigate("/emergency") }>
             Open
           </button>
         </div>
@@ -166,8 +166,8 @@ export default function Dashboard() {
       )}
 
       {/* Tiles Grid */}
-      <div className="row g-2 mb-3">
-        <div className="col-12 col-sm-6">
+      <div className="row g-1 mb-3">
+        <div className="col-6">
           <TileCard
             title="Checklist ✅"
             subtitle={`${checklistPercent}% completed`}
@@ -176,7 +176,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-12 col-sm-6">
+        <div className="col-6">
           <TileCard
             title="Water 💧"
             subtitle={`${waterInfo.count}/${waterInfo.goal} (${waterPercent}%)`}
@@ -185,7 +185,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-12 col-sm-6">
+        <div className="col-6">
           <TileCard
             title="Medicines 💊"
             subtitle={`${activeMedicines} active`}
@@ -194,7 +194,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-12 col-sm-6">
+        <div className="col-6">
           <TileCard
             title="Symptoms 🤒"
             subtitle="Track daily symptoms"
@@ -203,7 +203,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-12 col-sm-6">
+        <div className="col-6">
           <TileCard
             title="Weekly Guide 📘"
             subtitle={`Current week: ${progress.week}`}
@@ -212,7 +212,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-12 col-sm-6">
+        <div className="col-6">
           <TileCard
             title="Weight ⚖️"
             subtitle="Track weight logs"
@@ -221,7 +221,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-12 col-sm-6">
+        <div className="col-6">
           <TileCard
             title="Kick Counter 👶"
             subtitle="Save kick sessions"
@@ -230,7 +230,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-12 col-sm-6">
+        <div className="col-6">
           <TileCard
             title="Contractions ⏱️"
             subtitle="Timer for contractions"
